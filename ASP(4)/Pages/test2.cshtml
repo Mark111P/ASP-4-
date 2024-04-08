@@ -1,0 +1,120 @@
+﻿@page
+@model ASP_4_.Pages.test2Model
+@{
+    List<Q2> q2s = new List<Q2>();
+
+    q2s.Add(new Q2() { Id = 1, Question = "Question 1", Answers = new List<string>() { "q1a1", "q1a2", "q1a3", "q1a4" }, RightAnswers = new List<string>() { "q1a1", "q1a2" } });
+    q2s.Add(new Q2() { Id = 2, Question = "Question 2", Answers = new List<string>() { "q2a1", "q2a2", "q2a3", "q2a4" }, RightAnswers = new List<string>() { "q2a3", "q2a4" } });
+    q2s.Add(new Q2() { Id = 3, Question = "Question 3", Answers = new List<string>() { "q3a1", "q3a2", "q3a3", "q3a4" }, RightAnswers = new List<string>() { "q3a1", "q3a4" } });
+    q2s.Add(new Q2() { Id = 4, Question = "Question 4", Answers = new List<string>() { "q4a1", "q4a2", "q4a3", "q4a4" }, RightAnswers = new List<string>() { "q4a1", "q4a2", "q4a3" } });
+    q2s.Add(new Q2() { Id = 5, Question = "Question 5", Answers = new List<string>() { "q5a1", "q5a2", "q5a3", "q5a4" }, RightAnswers = new List<string>() { "q5a1", "q5a3"} });
+
+    List<Q2> q2st = new List<Q2>();
+    Random r = new Random();
+    for (int i = q2s.Count; i >= 1; i--)
+    {
+        int d = r.Next(0, i);
+        q2st.Add(q2s[d]);
+        q2s.RemoveAt(d);
+    }
+
+    q2s = q2st;
+}
+
+<div>
+    @{
+        foreach (Q2 q in q2s)
+        {
+                <div>
+                    <div>@q.Question</div>
+                    <div>
+                        @{
+                        for (int i = 0; i < q.RightAnswers.Count; i++)
+                        {
+                                    <input type="hidden" value='@q.RightAnswers[i]' />
+                        }
+                        }
+                    </div>
+                    <input type="hidden" value='@q.RightAnswers' />
+                    <div>
+                        @{
+                        for (int i = 0; i < q.Answers.Count; i++)
+                        {
+                                    <input type="checkbox" name='@("q" + @q.Id)' value='@q.Answers[i]' />
+
+                                    <span>@q.Answers[i]</span>
+                        }
+                        }
+                    </div>
+                    <br />
+                </div>
+        }
+    }
+</div>
+<script>
+    var names = [];
+</script>
+@{
+    for (int i = 0; i < q2s.Count; i++)
+    {
+            <script>
+                names.push('@("q" + q2s[i].Id)');
+            </script>
+    }
+}
+<script>
+    function SendS() {
+        var score = 0;
+        for (var i = 0; i < names.length; i++) {
+            var q = document.getElementsByName(names[i]);
+
+            var r = [];
+            var t = q[0].parentNode.parentNode.children[1];
+
+            var ra = [];
+            for (var j = 0; j < t.childElementCount; j++) {
+                ra.push(t.children[j].value);
+            }
+
+            for (var j = 0; j < q.length; j++) {
+                if (q[j].checked == true) {
+                    r.push(q[j].value);
+                }
+            }
+            if (r.length == 0) {
+                alert('Fill all the questions');
+                return false;
+            }
+            else {
+                if (JSON.stringify(r) == JSON.stringify(ra)) score += 3;
+            }
+        }
+
+        var t = document.getElementsByName('score')[0];
+        t.value = parseInt(t.value) + parseInt(score);
+
+        return true;
+    }
+</script>
+<form onsubmit="return SendS()" action="/test3" method="get">
+    <input name="score" type="hidden" value=0 />
+    <input name="maxscore" type="hidden" value=@(q2s.Count * 3) />
+    <button>Send</button>
+</form>
+
+@{
+    if (Request.Query.Count(i => i.Key == "maxscore") > 0)
+    {
+            <script>
+                var t = document.getElementsByName('maxscore')[0];
+                t.value = parseInt(t.value) + parseInt(@Request.Query.First(i => i.Key == "maxscore").Value);
+            </script>
+    }
+    if (Request.Query.Count(i => i.Key == "score") > 0)
+    {
+        <script>
+            var t = document.getElementsByName('score')[0];
+            t.value = parseInt(@Request.Query.First(i => i.Key == "score").Value);
+        </script>
+    }
+}

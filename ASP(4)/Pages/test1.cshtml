@@ -1,0 +1,90 @@
+﻿@page
+@model ASP_4_.Pages.test1Model
+@{
+    List<Q1> q1s = new List<Q1>();
+
+    q1s.Add(new Q1() {Id = 1, Question = "Question 1", Answers = new List<string>() { "q1a1", "q1a2", "q1a3", "q1a4" }, RightAnswer = "q1a2" });
+    q1s.Add(new Q1() {Id = 2, Question = "Question 2", Answers = new List<string>() { "q2a1", "q2a2", "q2a3", "q2a4" }, RightAnswer = "q2a4" });
+    q1s.Add(new Q1() {Id = 3, Question = "Question 3", Answers = new List<string>() { "q3a1", "q3a2", "q3a3", "q3a4" }, RightAnswer = "q3a1" });
+    q1s.Add(new Q1() {Id = 4, Question = "Question 4", Answers = new List<string>() { "q4a1", "q4a2", "q4a3", "q4a4" }, RightAnswer = "q4a1" });
+    q1s.Add(new Q1() {Id = 5, Question = "Question 5", Answers = new List<string>() { "q5a1", "q5a2", "q5a3", "q5a4" }, RightAnswer = "q5a3" });
+
+    List<Q1> q1st = new List<Q1>();
+    Random r = new Random();
+    for (int i = q1s.Count; i >= 1; i--)
+    {
+        int d = r.Next(0, i);
+        q1st.Add(q1s[d]);
+        q1s.RemoveAt(d);
+    }
+
+    q1s = q1st;
+}
+
+<div>
+    @{
+        foreach (Q1 q in q1s)
+        {
+            <div>
+                <div>@q.Question</div>
+                <input type="hidden" value='@q.RightAnswer'/>
+                <div>
+                    @{
+                        for (int i = 0; i < q.Answers.Count; i++)
+                        {
+                            <input type="radio" name='@("q" + @q.Id)' value='@q.Answers[i]' /><span>@q.Answers[i]</span>
+                        }
+                    }
+                </div>
+                <br />
+            </div>
+        }
+    }
+</div>
+<script>
+    var names = [];
+ </script>
+    @{
+        for (int i = 0; i < q1s.Count; i++)
+        {
+            <script>
+                names.push('@("q" + q1s[i].Id)');
+            </script>
+        }
+    }
+<script>
+    function SendS() { 
+        var score = 0;
+
+        for (var i = 0; i < names.length; i++)
+        {
+            var q = document.getElementsByName(names[i]);
+
+            var r = null;
+            var ra = q[0].parentNode.parentNode.children[1].value;
+
+            for (var j = 0; j < q.length; j++) { 
+                if (q[j].checked == true) {
+                    r = q[j].value;
+                    break;
+                }
+                else continue;
+            }
+            if (r == null) {
+                alert('Fill all the questions');
+                return false;
+            }
+            else {
+                if (r == ra) score += 1;
+            }
+        }
+
+        document.getElementsByName('score')[0].value = score;
+        return true;
+    }
+</script>
+<form onsubmit="return SendS()" action="/test2" method="get">
+    <input name="score" type="hidden" value=0/>
+    <input name="maxscore" type="hidden" value=@(q1s.Count * 1) />
+    <button>Send</button>
+</form>

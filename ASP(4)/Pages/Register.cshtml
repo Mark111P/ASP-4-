@@ -1,0 +1,92 @@
+﻿@page
+@model ASP_4_.Pages.RegistrateModel
+@{
+}
+<style>
+    input
+    {
+        outline: none;
+        border-color: black;
+    }
+    #fff span
+    {
+        color: red;
+    }
+</style>
+<script>
+    function CheckAll() 
+    { 
+        var isOk = true;
+
+        var tLogin = /^[0-9a-zA-Z]{2,}$/;
+        if (tLogin.test(ql.value)) {
+            ql.style.borderColor = 'black';
+            sl.style.display = 'none';
+        }
+        else { 
+            ql.style.borderColor = 'red';
+            sl.style.display = 'inline';
+            isOk = false;
+        }
+
+        var tPassword = /^[0-9a-zA-Z]{8,}$/;
+        if (tPassword.test(qp.value)) {
+            qp.style.borderColor = 'black';
+            sp.style.display = 'none';
+        }
+        else 
+        {
+            qp.style.borderColor = 'red';
+            sp.style.display = 'inline';
+            isOk = false;
+        }
+
+        if (qp.value == qc.value) {
+            qc.style.borderColor = 'black';
+            sc.style.display = 'none';
+        }
+        else {
+            qc.style.borderColor = 'red';
+            sc.style.display = 'inline';
+            isOk = false;
+        }
+
+        var tEmail = /^\w{3,}@@\w{3,}\.\w{2,}$/;
+        if (tEmail.test(qe.value)) {
+            qe.style.borderColor = 'black';
+            se.style.display = 'none';
+        }
+        else {
+            qe.style.borderColor = 'red';
+            se.style.display = 'inline';
+            isOk = false;
+        }
+
+        var tNumber = /^[0-9()\- +]{10,20}$/;
+        if (tNumber.test(qn.value)) {
+            qn.style.borderColor = 'black';
+            sn.style.display = 'none';
+        }
+        else {
+            qn.style.borderColor = 'red';
+            sn.style.display = 'inline';
+            isOk = false;
+        }
+
+        return isOk;
+    }
+</script>
+<div>LB4</div>
+<form action="/Index" id="fff" onsubmit="return CheckAll()">
+    <input id="ql" placeholder="Login" /><span id="sl" style="display:none">Must be /^[0-9a-zA-Z]{2,}$/</span>
+    <br />
+    <input id="qp" placeholder="Password" type="password" /><span id="sp" style="display:none">Must be /^[0-9a-zA-Z]{8,}$/</span>
+    <br />
+    <input id="qc" placeholder="Confirm password" type="password" /><span id="sc" style="display:none">Must be like password</span>
+    <br />
+    <input id="qe" placeholder="Email" /><span id="se" style="display:none">Must be  /^\w{3,}@@\w{3,}\.\w{2,}$/</span>
+    <br />
+    <input id="qn" placeholder="Number" /><span id="sn" style="display:none">Must be /^[0-9()\- +]{10,20}$/</span>
+    <br />
+    <button>Register</button>
+</form>

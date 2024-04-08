@@ -1,0 +1,95 @@
+﻿@page
+@model ASP_4_.Pages.test3Model
+@{
+    List<Q3> q3s = new List<Q3>();
+
+    q3s.Add(new Q3() { Id = 1, Question = "5 + 5", RightAnswer = "10" });
+    q3s.Add(new Q3() { Id = 2, Question = "7 * 3", RightAnswer = "21" });
+    q3s.Add(new Q3() { Id = 3, Question = "3 * 9", RightAnswer = "27" });
+    q3s.Add(new Q3() { Id = 4, Question = "15 / 5", RightAnswer = "3" });
+    q3s.Add(new Q3() { Id = 5, Question = "6 + 7", RightAnswer = "13" });
+
+    List<Q3> q3st = new List<Q3>();
+    Random r = new Random();
+    for (int i = q3s.Count; i >= 1; i--)
+    {
+        int d = r.Next(0, i);
+        q3st.Add(q3s[d]);
+        q3s.RemoveAt(d);
+    }
+
+    q3s = q3st;
+}
+
+<div>
+@{
+    foreach (Q3 q in q3s)
+    {
+        <div>
+            <div>@q.Question</div>
+            <input type="hidden" value='@q.RightAnswer' />
+            <input id="@("q" + q.Id)" placeholder="Answer..." value=""/>
+            <br /><br />
+        </div>
+    }
+}
+</div>
+
+<script>
+    var names = [];
+</script>
+@{
+    for (int i = 0; i < q3s.Count; i++)
+    {
+        <script>
+            names.push('@("q" + q3s[i].Id)');
+        </script>
+    }
+}
+<script>
+    function SendS() {
+        var score = 0;
+
+        for (var i = 0; i < names.length; i++) 
+        {
+            var r = document.getElementById(names[i]);
+            var ra = r.parentNode.children[1].value;
+
+            if (r.value == "") {
+                alert('Fill all the questions');
+                return false;
+            }
+            else {
+                if (r.value == ra) score += 5;
+            }
+        }
+
+        var t = document.getElementsByName('score')[0];
+        t.value = parseInt(t.value) + parseInt(score);
+
+        return true;
+    }
+</script>
+
+<form onsubmit="return SendS()" action="/finish" method="get">
+    <input name="score" type="hidden" value=0 />
+    <input name="maxscore" type="hidden" value=@(q3s.Count * 5) />
+    <button>Send</button>
+</form>
+
+@{
+    if (Request.Query.Count(i => i.Key == "maxscore") > 0)
+    {
+        <script>
+            var t = document.getElementsByName('maxscore')[0];
+            t.value = parseInt(t.value) + parseInt(@Request.Query.First(i => i.Key == "maxscore").Value);
+        </script>
+    }
+    if (Request.Query.Count(i => i.Key == "score") > 0)
+    {
+        <script>
+            var t = document.getElementsByName('score')[0];
+            t.value = parseInt(@Request.Query.First(i => i.Key == "score").Value);
+        </script>
+    }
+}

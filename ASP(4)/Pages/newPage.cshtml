@@ -1,0 +1,16 @@
+﻿@page
+@model ASP_4_.Pages.newPageModel
+@{
+    if (Request.Query.Count(i => i.Key == "sub") > 0)
+    {
+        <script>
+            alert('Thank you!');
+        </script>
+    }
+}
+
+<form>
+    <input name="email" placeholder="email"/><br />
+    <input type="checkbox" name="sub" value="sub"/> Subscribe<br />
+    <button>Send</button>
+</form>

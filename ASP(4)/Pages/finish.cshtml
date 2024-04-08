@@ -1,0 +1,20 @@
+﻿@page
+@model ASP_4_.Pages.finishModel
+@{
+    int s = 0;
+    int ms = 0;
+
+    if (Request.Query.Count(i => i.Key == "score") > 0)
+    {
+        s = int.Parse(Request.Query.First(i => i.Key == "score").Value);
+    }
+    if (Request.Query.Count(i => i.Key == "maxscore") > 0)
+    {
+        ms = int.Parse(Request.Query.First(i => i.Key == "maxscore").Value);
+    }
+}
+<div>Your score: @s / @ms</div>
+
+<form action="/test1">
+    <button>Restart</button>
+</form>

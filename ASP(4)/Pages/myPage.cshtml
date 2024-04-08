@@ -1,0 +1,168 @@
+﻿@page
+@model ASP_4_.Pages.myPageModel
+@{
+    List<string> countries = new List<string>()
+    {
+        "Ukraine", "United Kingdom", "Germany", "Italy", "France",
+        "Spain", "Sweden", "Japan", "China", "USA", "Canada", "Mexico"
+    };
+
+    Dictionary<string, string> pairs = new Dictionary<string, string>();
+    pairs.Add("key1", "12345678a");
+    pairs.Add("key2", "12345678b");
+    pairs.Add("key3", "12345678c");
+
+    string? a = "";
+    string? b = "";
+    string? c = "";
+
+    if (Request.Query.Count(i => i.Key == "name5") > 0)
+    {
+        a = Request.Query.First(i => i.Key == "name5").Value;
+    }
+    if (Request.Query.Count(i => i.Key == "number5") > 0)
+    {
+        b = Request.Query.First(i => i.Key == "number5").Value;
+    }
+    if (Request.Query.Count(i => i.Key == "message5") > 0)
+    {
+        c = Request.Query.First(i => i.Key == "message5").Value;
+    }
+}
+
+<div>LB1</div>
+<form>
+    <input placeholder="Some text" value="" name="text"/>
+    <button>Send</button>
+</form>
+<div>
+    @{
+        if (Request.Query.Count(i => i.Key == "text") > 0)
+        {
+            @Request.Query.First(i => i.Key == "text").Value;
+        }
+    }
+</div>
+<br />
+
+<div>LB2</div>
+<form>
+    <input placeholder="Find" value="" name="part" />
+    <button>Search</button>
+</form>
+<div>
+    @{
+        if (Request.Query.Count(i => i.Key == "part") > 0)
+        {
+            string? t = Request.Query.First(i => i.Key == "part").Value;
+            if (t != "")
+            {
+                var q = countries.Where(i => i.ToLower().Contains(t.ToLower())).ToList();
+
+                foreach (var x in q)
+                {
+                    List<int> idt = new List<int>();
+                    for (int i = 0; i <= x.Length - t.Length; i++)
+                    {
+                        if (new String(x.Skip(i).Take(t.Length).ToArray()).ToLower() == t.ToLower())
+                        {
+                            idt.Add(i);
+                        }
+                    }
+
+                    int w = idt.Count;
+
+                    for (int i = 0; i < w; i++)
+                    {
+                        if (idt[i] + t.Length < x.Length)
+                        {
+                            idt.Add(idt[i] + t.Length);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    if (!idt.Contains(0)) idt.Add(0);
+                    idt = idt.OrderBy(i => i).ToList();
+
+                    List<string> vals = new List<string>();
+                    for (int i = 0; i < idt.Count; i++)
+                    {
+                        int ts = idt[i];
+                        int tt = i == idt.Count - 1 ? 0 : idt[i + 1] - idt[i];
+                        if (i == idt.Count - 1) tt = x.Length;
+                        vals.Add(new String(x.Skip(ts).Take(tt).ToArray()));
+                    }
+                            <div style="font-size: 0">
+                                @{
+                            for (int i = 0; i < vals.Count; i++)
+                            {
+                                if (vals[i].ToLower() == t.ToLower())
+                                {
+                                                    <span style="color: red; font-weight: bold; font-size:medium">@vals[i]</span>
+                                }
+                                else
+                                {
+                                                    <span style="font-size:medium">@vals[i]</span>
+                                }
+                            }
+                                }
+                        </div>
+                }
+            }
+        }
+    }
+</div>
+<br />
+
+<div>LB3</div>
+<form>
+    <input id="lll" name="tLogin" placeholder="login"/>
+    <input id="ppp" name="tPass" placeholder="password" type="password"/>
+    <button onclick="checkL()">Login</button>
+
+    @{
+        if (Request.Query.Count(i => i.Key == "tLogin") == 1 && Request.Query.Count(i => i.Key == "tPass") == 1)
+        {
+            string? l = Request.Query.First(i => i.Key == "tLogin").Value;
+            string? p = Request.Query.First(i => i.Key == "tPass").Value;
+
+            if (pairs.ContainsKey(l))
+            {
+                if (pairs[l] == p)
+                {
+                    <script>
+                        location.href = '/Index';
+                    </script>
+                }
+                else
+                {
+                    <div>
+                        Some errors. Try again or <a href="/Register">register</a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div>
+                    Some errors. Try again or <a href="/Register">register</a>
+                </div>
+            }
+        }
+    }
+</form>
+<br />
+<br />
+
+<div>LB5</div>
+<form>
+    <input name="name5" placeholder="Name"/><br />
+    <input name="number5" placeholder="Number"/><br />
+    <textarea name="message5" placeholder="Message"></textarea><br />
+    <button>Submit</button>
+</form>
+<br />
+<div>Name: @a</div><br />
+<div>Number: @b</div><br />
+<div>Message: @c</div><br />
